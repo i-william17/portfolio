@@ -8,6 +8,8 @@ const Section = styled.section`
   max-width: 1200px;
   margin: 0 auto;
   background-color: #f9fafb;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
 const Header = styled.div`
@@ -46,6 +48,10 @@ const Card = styled(motion.div)`
   text-align: center;
   transition: all 0.3s ease;
   border: 1px solid rgba(0, 0, 0, 0.05);
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
 `;
 
 const Icon = styled.div`
@@ -146,53 +152,21 @@ const Skills = () => {
     }
   };
 
-  const cardHover = {
-    scale: 1.03,
-    boxShadow: "0 8px 25px rgba(0, 0, 0, 0.12)",
-    y: -5
-  };
-
   return (
     <Section id="skills" ref={ref}>
       <Header>
-        <Title
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          Technical Skills
-        </Title>
-        <Subtitle
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          A diverse tech stack for building modern web applications.
-        </Subtitle>
+        <Title initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>Technical Skills</Title>
+        <Subtitle initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }}>A diverse tech stack for building modern web applications.</Subtitle>
       </Header>
       
-      <Grid
-        variants={container}
-        initial="hidden"
-        animate={controls}
-      >
+      <Grid variants={container} initial="hidden" animate={controls}>
         {skills.map((skill, index) => (
-          <Card
-            key={index}
-            variants={item}
-            whileHover={cardHover}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
+          <Card key={index} variants={item} transition={{ type: "spring", stiffness: 300 }}>
             <Icon>{skill.icon}</Icon>
             <Category>{skill.category}</Category>
             <List>
               {skill.items.map((item, i) => (
-                <ListItem 
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ delay: 0.4 + (index * 0.1) + (i * 0.05) }}
-                >
+                <ListItem key={i} initial={{ opacity: 0, x: -10 }} animate={isInView ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.4 + (index * 0.1) + (i * 0.05) }}>
                   <SkillBadge>✓</SkillBadge>
                   {item}
                 </ListItem>

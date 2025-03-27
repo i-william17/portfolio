@@ -2,17 +2,22 @@ import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styled from "@emotion/styled";
+import img1 from "../assets/DSC_0111.jpg"
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
-// Styled components for better maintainability
+// Styled components
 const Section = styled.section`
-  padding: 8rem 1rem 5rem;
-  max-width: 80rem;
+  padding: 6rem 1.5rem 4rem;
+  max-width: 90rem;
   margin: 0 auto;
   position: relative;
   overflow: hidden;
+
+  @media (min-width: 768px) {
+    padding: 8rem 2rem 5rem;
+  }
 `;
 
 const Grid = styled.div`
@@ -23,6 +28,7 @@ const Grid = styled.div`
 
   @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
+    gap: 4rem;
   }
 `;
 
@@ -30,10 +36,15 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  order: 2;
+
+  @media (min-width: 768px) {
+    order: 1;
+  }
 `;
 
 const Heading = styled.h1`
-  font-size: clamp(2.5rem, 5vw, 3.75rem);
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
@@ -50,7 +61,7 @@ const GradientText = styled.span`
 `;
 
 const SubHeading = styled.h2`
-  font-size: clamp(1.25rem, 3vw, 1.875rem);
+  font-size: clamp(1.125rem, 3vw, 1.875rem);
   font-weight: 500;
   color: #64748b;
   margin: 0;
@@ -66,13 +77,17 @@ const Paragraph = styled.p`
   margin: 0;
   opacity: 0;
   transform: translateY(20px);
+
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 `;
 
 const Button = styled.a`
@@ -85,9 +100,20 @@ const Button = styled.a`
   display: inline-block;
   opacity: 0;
   transform: translateY(20px);
+  font-size: 1rem;
 
   &:hover {
     transform: translateY(-2px);
+  }
+
+  &:focus {
+    outline: 2px solid #0ea5e9;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.875rem;
   }
 `;
 
@@ -98,6 +124,7 @@ const PrimaryButton = styled(Button)`
 
   &:hover {
     opacity: 0.9;
+    box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.3);
   }
 `;
 
@@ -108,28 +135,42 @@ const SecondaryButton = styled(Button)`
 
   &:hover {
     background-color: #f1f5f9;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   }
 `;
 
 const SocialLinks = styled.div`
   display: flex;
   gap: 1.5rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 `;
 
 const SocialIcon = styled.a`
   color: #64748b;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, transform 0.3s ease;
   opacity: 0;
   transform: translateY(20px);
 
   &:hover {
+    color: #0ea5e9;
+    transform: translateY(-2px);
+  }
+
+  &:focus {
+    outline: none;
     color: #0ea5e9;
   }
 
   svg {
     width: 24px;
     height: 24px;
+  }
+
+  @media (max-width: 480px) {
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 `;
 
@@ -138,6 +179,13 @@ const ImageContainer = styled.div`
   perspective: 1000px;
   opacity: 0;
   transform: translateY(20px);
+  order: 1;
+  margin-bottom: 2rem;
+
+  @media (min-width: 768px) {
+    order: 2;
+    margin-bottom: 0;
+  }
 `;
 
 const ImageGradient = styled.div`
@@ -162,6 +210,11 @@ const ImageWrapper = styled.div`
   &:hover {
     transform: rotate(6deg) scale(1.02);
   }
+
+  @media (max-width: 768px) {
+    max-width: 80%;
+    margin: 0 auto;
+  }
 `;
 
 const Image = styled.img`
@@ -184,8 +237,8 @@ const Hero = () => {
 
   useEffect(() => {
     // Animate elements when component mounts
-    elementsRef.current.forEach((el, index) => {
-      gsap.to(el, {
+    const animations = elementsRef.current.map((el, index) => {
+      return gsap.to(el, {
         opacity: 1,
         y: 0,
         duration: 0.8,
@@ -195,24 +248,33 @@ const Hero = () => {
     });
 
     // Parallax effect for the image
-    gsap.to(heroRef.current.querySelector(".image-wrapper"), {
-      y: 30,
-      scrollTrigger: {
-        trigger: heroRef.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
-      },
-    });
+    const imageWrapper = heroRef.current.querySelector(".image-wrapper");
+    if (imageWrapper) {
+      const parallax = gsap.to(imageWrapper, {
+        y: 30,
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
 
-    // Clean up
+      return () => {
+        animations.forEach(anim => anim.kill());
+        parallax.kill();
+        ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      };
+    }
+
     return () => {
+      animations.forEach(anim => anim.kill());
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, []);
 
   return (
-    <Section ref={heroRef} id="home">
+    <Section ref={heroRef} id="home" aria-label="Hero section">
       <Grid>
         <Content>
           <Heading ref={addToRefs}>
@@ -229,28 +291,47 @@ const Hero = () => {
             <PrimaryButton
               href="#contact"
               ref={addToRefs}
+              aria-label="Contact me"
             >
               Get In Touch
             </PrimaryButton>
             <SecondaryButton
               href="#projects"
               ref={addToRefs}
+              aria-label="View my projects"
             >
               View My Work
             </SecondaryButton>
           </ButtonContainer>
 
           <SocialLinks>
-            {["github", "linkedin", "twitter"].map((platform, index) => (
+            {[
+              { 
+                platform: "github", 
+                url: "https://github.com", 
+                label: "GitHub profile" 
+              },
+              { 
+                platform: "linkedin", 
+                url: "https://linkedin.com", 
+                label: "LinkedIn profile" 
+              },
+              { 
+                platform: "twitter", 
+                url: "https://twitter.com", 
+                label: "Twitter profile" 
+              }
+            ].map(({ platform, url, label }, index) => (
               <SocialIcon
                 key={platform}
-                href={`https://${platform}.com`}
+                href={url}
                 target="_blank"
                 rel="noopener noreferrer"
                 ref={addToRefs}
+                aria-label={label}
                 style={{ transitionDelay: `${0.3 + index * 0.1}s` }}
               >
-                <svg viewBox="0 0 24 24" fill="currentColor">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   {platform === "github" && (
                     <path
                       fillRule="evenodd"
@@ -271,12 +352,14 @@ const Hero = () => {
         </Content>
 
         <ImageContainer ref={addToRefs}>
-          <ImageGradient />
+          <ImageGradient aria-hidden="true" />
           <ImageWrapper className="image-wrapper">
             <Image
-              src="https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
-              alt="William working"
+              src={img1}
+              alt="William working on a laptop"
               loading="lazy"
+              width="500"
+              height="500"
             />
           </ImageWrapper>
         </ImageContainer>
