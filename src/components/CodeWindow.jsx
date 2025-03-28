@@ -158,7 +158,9 @@ const CodeWindow = ({
   language = 'javascript', 
   speed = 30,
   userName = 'William',
-  userTitle = 'Full-Stack Developer'
+  userTitle = 'Full-Stack Developer',
+  darkMode,
+  toggleDarkMode
 }) => {
   const [displayedCode, setDisplayedCode] = useState('');
   const [isTyping, setIsTyping] = useState(true);

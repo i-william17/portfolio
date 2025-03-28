@@ -29,7 +29,7 @@ const colors = {
 // Styled components
 const Section = styled.section`
   padding: 6rem 1.5rem;
-  max-width: 85rem;
+  max-width: 100%;
   margin: 0 auto;
   background-color: ${colors.background};
   

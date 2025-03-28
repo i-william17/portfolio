@@ -51,7 +51,7 @@ function App() {
     <div className="font-sans bg-white text-dark-800 dark:bg-dark-900 dark:text-dark-100 transition-colors duration-300">
       <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <main className="pt-16">
-        <Hero />
+        <Hero darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <div data-aos="fade-up">
           <CodeWindow />
         </div>

@@ -1,5 +1,42 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
+
+// Define color themes
+const lightTheme = {
+  body: "#f8fafc",
+  text: "#1e293b",
+  subtitle: "#64748b",
+  heading: "linear-gradient(to right, #6366F1, #EC4899)",
+  cardBg: "#ffffff",
+  cardBorder: "#e2e8f0",
+  cardHover: "rgba(0, 0, 0, 0.1)",
+  jobTitle: "#111827",
+  company: "#6366F1",
+  period: "#6B7280",
+  description: "#4B5563",
+  tagBg: "#E0E7FF",
+  tagText: "#4338CA",
+  timelineLine: "linear-gradient(to bottom, rgba(99, 102, 241, 0.3), #6366F1, rgba(236, 72, 153, 0.3))",
+  iconBg: "linear-gradient(to right, #6366F1, #EC4899)",
+};
+
+const darkTheme = {
+  body: "#0f172a",
+  text: "#f8fafc",
+  subtitle: "#94a3b8",
+  heading: "linear-gradient(to right, #818CF8, #F472B6)",
+  cardBg: "#1e293b",
+  cardBorder: "#334155",
+  cardHover: "rgba(255, 255, 255, 0.05)",
+  jobTitle: "#f8fafc",
+  company: "#A78BFA",
+  period: "#9CA3AF",
+  description: "#D1D5DB",
+  tagBg: "rgba(167, 139, 250, 0.1)",
+  tagText: "#C4B5FD",
+  timelineLine: "linear-gradient(to bottom, rgba(129, 140, 248, 0.3), #818CF8, rgba(244, 114, 182, 0.3))",
+  iconBg: "linear-gradient(to right, #818CF8, #F472B6)",
+};
 
 const ExperienceItem = ({ experience, index }) => {
   return (
@@ -26,7 +63,7 @@ const ExperienceItem = ({ experience, index }) => {
   );
 };
 
-const Experience = () => {
+const Experience = ({ darkMode, toggleDarkMode }) => {
   const experiences = [
     {
       title: "Senior Software Engineer",
@@ -67,22 +104,24 @@ const Experience = () => {
   ];
 
   return (
-    <Section id="experience">
-      <Header>
-        <Title>Work Experience</Title>
-        <Subtitle>My professional journey and the companies I've worked with.</Subtitle>
-      </Header>
-      
-      <TimelineContainer>
-        <TimelineLine />
+    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+      <Section id="experience">
+        <Header>
+          <Title>Work Experience</Title>
+          <Subtitle>My professional journey and the companies I've worked with.</Subtitle>
+        </Header>
         
-        <TimelineList>
-          {experiences.map((exp, index) => (
-            <ExperienceItem key={index} experience={exp} index={index} />
-          ))}
-        </TimelineList>
-      </TimelineContainer>
-    </Section>
+        <TimelineContainer>
+          <TimelineLine />
+          
+          <TimelineList>
+            {experiences.map((exp, index) => (
+              <ExperienceItem key={index} experience={exp} index={index} />
+            ))}
+          </TimelineList>
+        </TimelineContainer>
+      </Section>
+    </ThemeProvider>
   );
 };
 
@@ -94,6 +133,9 @@ const Section = styled.section`
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
+  background-color: ${({ theme }) => theme.body};
+  color: ${({ theme }) => theme.text};
+  transition: all 0.3s ease;
 
   @media (max-width: 768px) {
     padding: 3rem 1rem;
@@ -103,6 +145,7 @@ const Section = styled.section`
 const Header = styled.div`
   text-align: center;
   margin-bottom: 4rem;
+  position: relative;
 
   @media (max-width: 768px) {
     margin-bottom: 2rem;
@@ -113,7 +156,7 @@ const Title = styled.h2`
   font-size: 2.25rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  background: linear-gradient(to right, #6366F1, #EC4899);
+  background: ${({ theme }) => theme.heading};
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -125,7 +168,7 @@ const Title = styled.h2`
 
 const Subtitle = styled.p`
   font-size: 1.25rem;
-  color: #6B7280;
+  color: ${({ theme }) => theme.subtitle};
   max-width: 48rem;
   margin: 0 auto;
 
@@ -133,6 +176,37 @@ const Subtitle = styled.p`
     font-size: 1rem;
     padding: 0 1rem;
   }
+`;
+
+const ThemeToggle = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.tagBg};
+  color: ${({ theme }) => theme.tagText};
+  border: 1px solid ${({ theme }) => theme.cardBorder};
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.company};
+    color: white;
+  }
+`;
+
+const ThemeIcon = styled.svg`
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 `;
 
 const TimelineContainer = styled.div`
@@ -146,7 +220,7 @@ const TimelineLine = styled.div`
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(to bottom, rgba(99, 102, 241, 0.3), #6366F1, rgba(236, 72, 153, 0.3));
+  background: ${({ theme }) => theme.timelineLine};
   transform: translateX(-50%);
 
   @media (min-width: 768px) {
@@ -196,7 +270,7 @@ const TimelineIcon = styled.div`
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
-  background: linear-gradient(to right, #6366F1, #EC4899);
+  background: ${({ theme }) => theme.iconBg};
   color: white;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   z-index: 10;
@@ -215,15 +289,15 @@ const TimelineIcon = styled.div`
 const TimelineCard = styled.div`
   width: 100%;
   padding: 1rem;
-  background-color: white;
+  background-color: ${({ theme }) => theme.cardBg};
   border-radius: 0.75rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #E5E7EB;
+  border: 1px solid ${({ theme }) => theme.cardBorder};
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px ${({ theme }) => theme.cardHover};
   }
 
   @media (min-width: 768px) {
@@ -231,50 +305,29 @@ const TimelineCard = styled.div`
     padding: 1.5rem;
     margin: ${({ $alternate }) => $alternate ? '0 3rem 0 0' : '0 0 0 3rem'};
   }
-
-  @media (prefers-color-scheme: dark) {
-    background-color: #1F2937;
-    border-color: #374151;
-  }
 `;
 
 const JobTitle = styled.h3`
   font-size: 1.25rem;
   font-weight: 700;
-  color: #111827;
+  color: ${({ theme }) => theme.jobTitle};
   margin-bottom: 0.5rem;
-
-  @media (prefers-color-scheme: dark) {
-    color: #F3F4F6;
-  }
 `;
 
 const Company = styled.p`
-  color: #6366F1;
+  color: ${({ theme }) => theme.company};
   font-weight: 500;
   margin-bottom: 0.25rem;
-
-  @media (prefers-color-scheme: dark) {
-    color: #A78BFA;
-  }
 `;
 
 const Period = styled.p`
   font-size: 0.875rem;
-  color: #6B7280;
-
-  @media (prefers-color-scheme: dark) {
-    color: #9CA3AF;
-  }
+  color: ${({ theme }) => theme.period};
 `;
 
 const Description = styled.p`
-  color: #4B5563;
+  color: ${({ theme }) => theme.description};
   line-height: 1.6;
-
-  @media (prefers-color-scheme: dark) {
-    color: #D1D5DB;
-  }
 `;
 
 const Tags = styled.div`
@@ -289,11 +342,6 @@ const Tag = styled.span`
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
-  background-color: #E0E7FF;
-  color: #4338CA;
-
-  @media (prefers-color-scheme: dark) {
-    background-color: rgba(167, 139, 250, 0.1);
-    color: #C4B5FD;
-  }
+  background-color: ${({ theme }) => theme.tagBg};
+  color: ${({ theme }) => theme.tagText};
 `;
